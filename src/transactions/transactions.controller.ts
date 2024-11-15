@@ -6,40 +6,68 @@ import {
   Patch,
   Param,
   Delete,
+  InternalServerErrorException,
+  UseGuards,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   create(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionsService.create(createTransactionDto);
+    try {
+      return this.transactionsService.create(createTransactionDto);
+    } catch (e) {
+      throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
+    }
   }
 
   @Get()
+  @UseGuards(AuthGuard)
   findAll() {
-    return this.transactionsService.findAll();
+    try {
+      return this.transactionsService.findAll();
+    } catch (e) {
+      throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
+    }
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard)
   findOne(@Param('id') id: string) {
-    return this.transactionsService.findOne(id);
+    try {
+      return this.transactionsService.findOne(id);
+    } catch (e) {
+      throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
+    }
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard)
   update(
     @Param('id') id: string,
     @Body() updateTransactionDto: UpdateTransactionDto,
   ) {
-    return this.transactionsService.update(id, updateTransactionDto);
+    try {
+      return this.transactionsService.update(id, updateTransactionDto);
+    } catch (e) {
+      throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
+    }
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   remove(@Param('id') id: string) {
-    return this.transactionsService.remove(id);
+    try {
+      return this.transactionsService.remove(id);
+    } catch (e) {
+      throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
+    }
   }
 }
