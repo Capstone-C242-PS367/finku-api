@@ -7,10 +7,12 @@ import {
   Param,
   Delete,
   InternalServerErrorException,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -26,6 +28,7 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
   findAll() {
     try {
       return this.usersService.findAll();
@@ -53,6 +56,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   remove(@Param('id') id: string) {
     try {
       return this.usersService.remove(id);

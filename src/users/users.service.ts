@@ -57,17 +57,27 @@ export class UsersService {
     if (!snapshot.exists) {
       throw new InternalServerErrorException();
     }
-    const data = {
-      id: snapshot.id,
-      name: snapshot.data().name,
-      email: snapshot.data().email,
-      created_at: snapshot.data().created_at,
-      update_at: snapshot.data().updated_at,
-    };
+
     return {
       status: 'success',
       message: 'User fetched successfully',
-      data: data,
+      data: snapshot.data(),
+    };
+  }
+
+  async findByEmail(email: string) {
+    const snapshot = await this.collection
+      .where('email', '==', email)
+      .limit(1)
+      .get();
+    if (snapshot.empty) {
+      throw new NotFoundException();
+    }
+    console.log(snapshot.docs[0].data());
+    return {
+      status: 'success',
+      message: 'User fetched successfully',
+      data: snapshot.docs[0].data(),
     };
   }
 
