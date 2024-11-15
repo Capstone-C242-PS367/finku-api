@@ -7,6 +7,6 @@ export class Transaction {
   type: string;
   category: string;
   currency: string;
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: Date;
+  updated_at: Date;
 }
