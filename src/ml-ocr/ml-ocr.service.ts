@@ -10,7 +10,7 @@ export class MlOcrService {
     const type = ['CR', 'DB'];
     for (let i = 0; i <= Math.floor(Math.random() * 7) + 1; i++) {
       result.push({
-        amount: Math.random() * 100000,
+        amount: Math.floor(Math.random() * 100000),
         type: type[i % 2],
         category: category[Math.floor(Math.random() * 4)],
         name: name[Math.floor(Math.random() * 5)],
