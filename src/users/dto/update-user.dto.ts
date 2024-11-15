@@ -4,7 +4,7 @@ import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsString()
-  @IsNotEmpty({ message: 'user_id is required' })
+  @IsNotEmpty({ message: 'Name is required' })
   name: string;
 
   @IsString()

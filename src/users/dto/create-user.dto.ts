@@ -8,7 +8,7 @@ import {
 
 export class CreateUserDto {
   @IsString()
-  @IsNotEmpty({ message: 'user_id is required' })
+  @IsNotEmpty({ message: 'Name is required' })
   name: string;
 
   @IsNotEmpty({ message: 'Email is required.' })
