@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -17,17 +18,29 @@ export class TransactionsController {
 
   @Post()
   create(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionsService.create(createTransactionDto);
+    try {
+      return this.transactionsService.create(createTransactionDto);
+    } catch (e) {
+      throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
+    }
   }
 
   @Get()
   findAll() {
-    return this.transactionsService.findAll();
+    try {
+      return this.transactionsService.findAll();
+    } catch (e) {
+      throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
+    }
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.transactionsService.findOne(id);
+    try {
+      return this.transactionsService.findOne(id);
+    } catch (e) {
+      throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
+    }
   }
 
   @Patch(':id')
@@ -35,11 +48,19 @@ export class TransactionsController {
     @Param('id') id: string,
     @Body() updateTransactionDto: UpdateTransactionDto,
   ) {
-    return this.transactionsService.update(id, updateTransactionDto);
+    try {
+      return this.transactionsService.update(id, updateTransactionDto);
+    } catch (e) {
+      throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
+    }
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.transactionsService.remove(id);
+    try {
+      return this.transactionsService.remove(id);
+    } catch (e) {
+      throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
+    }
   }
 }
