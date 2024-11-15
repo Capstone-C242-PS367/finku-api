@@ -7,16 +7,19 @@ import {
   Param,
   Delete,
   InternalServerErrorException,
+  UseGuards,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   create(@Body() createTransactionDto: CreateTransactionDto) {
     try {
       return this.transactionsService.create(createTransactionDto);
@@ -26,6 +29,7 @@ export class TransactionsController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
   findAll() {
     try {
       return this.transactionsService.findAll();
@@ -35,6 +39,7 @@ export class TransactionsController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard)
   findOne(@Param('id') id: string) {
     try {
       return this.transactionsService.findOne(id);
@@ -44,6 +49,7 @@ export class TransactionsController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard)
   update(
     @Param('id') id: string,
     @Body() updateTransactionDto: UpdateTransactionDto,
@@ -56,6 +62,7 @@ export class TransactionsController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   remove(@Param('id') id: string) {
     try {
       return this.transactionsService.remove(id);
