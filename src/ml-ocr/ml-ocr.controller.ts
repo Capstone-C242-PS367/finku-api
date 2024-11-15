@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('ml-ocr')
+@Controller('predict')
 export class MlOcrController {}

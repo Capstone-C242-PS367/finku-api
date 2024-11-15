@@ -4,6 +4,6 @@ import { MlOcrController } from './ml-ocr.controller';
 
 @Module({
   providers: [MlOcrService],
-  controllers: [MlOcrController]
+  controllers: [MlOcrController],
 })
 export class MlOcrModule {}
