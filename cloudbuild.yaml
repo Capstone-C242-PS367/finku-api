@@ -24,7 +24,4 @@ steps:
 
 logsBucket: 'gs://finku-app_cloudbuild'
 
-options:
-  logging: CLOUD_LOGGING_ONLY
-
 serviceAccount: '996360456227-compute@developer.gserviceaccount.com'
