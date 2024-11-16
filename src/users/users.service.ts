@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -7,21 +8,32 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Firestore } from '@google-cloud/firestore';
 import { v4 } from 'uuid';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   private collection = new Firestore().collection('users');
 
   async create(createUserDto: CreateUserDto) {
+    const isAvail = await this.collection
+      .where('email', '==', createUserDto.email)
+      .limit(1)
+      .get();
+    if (!isAvail.empty) {
+      throw new BadRequestException('User with this email already exists');
+    }
+
     const id = v4();
+    const hashedPassword = await this.hashPassword(createUserDto.password);
     await this.collection.doc(id).set({
       id: id,
       name: createUserDto.name,
       email: createUserDto.email,
-      password: createUserDto.password,
+      password: hashedPassword,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     });
+
     return {
       status: 'success',
       message: 'User created successfully',
@@ -45,6 +57,7 @@ export class UsersService {
         updated_at: doc.data().updated_at,
       });
     });
+
     return {
       status: 'success',
       message: 'All user fetched successfully',
@@ -55,7 +68,7 @@ export class UsersService {
   async findOne(id: string) {
     const snapshot = await this.collection.doc(id).get();
     if (!snapshot.exists) {
-      throw new InternalServerErrorException();
+      throw new NotFoundException(`User with ID #${id} not found`);
     }
 
     return {
@@ -73,7 +86,7 @@ export class UsersService {
     if (snapshot.empty) {
       throw new NotFoundException();
     }
-    console.log(snapshot.docs[0].data());
+
     return {
       status: 'success',
       message: 'User fetched successfully',
@@ -88,18 +101,27 @@ export class UsersService {
       throw new NotFoundException(`User with ID #${id} not found`);
     }
 
-    // @typescript-eslint/ban-ts-comment
-    await userDoc.update({
-      name: updateUserDto.name,
-      email: updateUserDto.email,
-      password: updateUserDto.password,
+    const updatedData = {
+      ...updateUserDto,
       updated_at: new Date().toISOString(),
-    });
-    return {
-      status: 'success',
-      message: `User with ID #${id} updated successfully`,
-      data: updateUserDto,
     };
+
+    if (updateUserDto.password) {
+      updatedData.password = await this.hashPassword(updateUserDto.password);
+    }
+
+    try {
+      await userDoc.update(updatedData);
+      return {
+        status: 'success',
+        message: `User with ID #${id} updated successfully`,
+        data: updatedData,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Failed to update user: ${error.message}`,
+      );
+    }
   }
 
   async remove(id: string) {
@@ -111,9 +133,15 @@ export class UsersService {
     }
 
     await userDoc.delete();
+
     return {
       status: 'success',
       message: `User with ID #${id} removed successfully`,
     };
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    const saltRounds = 10;
+    return bcrypt.hash(password, saltRounds);
   }
 }

@@ -1,0 +1,23 @@
+steps:
+  # Step 1: Build the Docker Image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '-t', 'asia-southeast2-docker.pkg.dev/finku-app/backend/finku-api:prod', '.' ]
+
+  # Step 2: Push the image to the Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'asia-southeast2-docker.pkg.dev/finku-app/backend/finku-api:prod' ]
+
+  # Step 3: Deployment to Cloud Run after image is pushed
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'finku-api'
+      - '--image'
+      - 'asia-southeast2-docker.pkg.dev/finku-app/backend/finku-api:prod'
+      - '--region'
+      - 'asia-southeast2'
+      - '--platform'
+      - 'managed'
+      # Optional: if you want to allow unauthenticated access
+      - '--allow-unauthenticated'
