@@ -10,7 +10,7 @@ async function bootstrap() {
     .setTitle('Finku Api')
     .setDescription('API description')
     .setVersion('1.0')
-    .addTag('finku')
+    .addBearerAuth()
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
