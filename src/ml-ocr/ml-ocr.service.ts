@@ -27,12 +27,30 @@ export class MlOcrService {
         date: new Date().toISOString(),
       });
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let totalDB = 0;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let totalCR = 0;
+
+    result.forEach((res) => {
+      if (res.type === 'CR') {
+        totalCR += res.amount;
+      } else {
+        totalDB += res.amount;
+      }
+    });
+
     ////////////////////////////////////////
 
     return {
       status: 'success',
       message: 'Berhasil melakukan ocr',
-      data: result,
+      data: {
+        total_DB: totalDB,
+        total_CR: totalCR,
+        difference: totalDB - totalCR,
+        result: result,
+      },
     };
   }
 }

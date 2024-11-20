@@ -29,7 +29,7 @@ export class MlOcrController {
   @ApiConsumes('multipart/form-data')
   @ApiResponse({
     status: 200,
-    description: 'Successfully performed OCR.',
+    description: 'Successfully performed OCR and calculated totals.',
     schema: {
       type: 'object',
       properties: {
@@ -42,55 +42,54 @@ export class MlOcrController {
           example: 'Berhasil melakukan ocr',
         },
         data: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              amount: {
-                type: 'number',
-                example: 61424,
-              },
-              type: {
-                type: 'string',
-                example: 'CR',
-              },
-              category: {
-                type: 'string',
-                example: 'Listrik',
-              },
-              name: {
-                type: 'string',
-                example: 'ayam geprek',
-              },
-              currency: {
-                type: 'string',
-                example: 'IDR',
-              },
-              date: {
-                type: 'string',
-                format: 'date-time',
-                example: '2024-11-16T12:00:07.332Z',
+          type: 'object',
+          properties: {
+            total_DB: {
+              type: 'number',
+              example: 93144,
+            },
+            total_CR: {
+              type: 'number',
+              example: 44236,
+            },
+            difference: {
+              type: 'number',
+              example: 48908,
+            },
+            result: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  amount: {
+                    type: 'number',
+                    example: 25531,
+                  },
+                  type: {
+                    type: 'string',
+                    example: 'CR',
+                  },
+                  category: {
+                    type: 'string',
+                    example: 'Listrik',
+                  },
+                  name: {
+                    type: 'string',
+                    example: 'ayam geprek',
+                  },
+                  currency: {
+                    type: 'string',
+                    example: 'IDR',
+                  },
+                  date: {
+                    type: 'string',
+                    format: 'date-time',
+                    example: '2024-11-20T01:21:52.454Z',
+                  },
+                },
               },
             },
           },
-          example: [
-            {
-              amount: 61424,
-              type: 'CR',
-              category: 'Listrik',
-              name: 'ayam geprek',
-              currency: 'IDR',
-              date: '2024-11-16T12:00:07.332Z',
-            },
-            {
-              amount: 45000,
-              type: 'DB',
-              category: 'Makanan',
-              name: 'nasi goreng',
-              currency: 'IDR',
-              date: '2024-11-16T15:00:00.000Z',
-            },
-          ],
         },
       },
     },
