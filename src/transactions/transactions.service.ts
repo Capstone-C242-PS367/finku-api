@@ -4,40 +4,58 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Firestore } from '@google-cloud/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class TransactionsService {
-  private collection = new Firestore().collection('transactions');
-  constructor(private readonly usersService: UsersService) {}
+  private collection;
+  constructor(private readonly usersService: UsersService) {
+    try {
+      const firestore = new Firestore({
+        projectId: 'finku-app',
+      });
+      this.collection = firestore.collection('transactions');
+    } catch (error) {
+      console.error('Failed to initialize Firestore client:', error.message);
+    }
+  }
   async create(createTransactionDto: CreateTransactionDto) {
-    const user = await this.usersService.findOne(createTransactionDto.user_id);
+    const { user_id, data } = createTransactionDto;
+
+    const user = await this.usersService.findOne(user_id);
     if (!user) {
-      throw new NotFoundException(
-        `User with ID ${createTransactionDto.user_id} not found`,
-      );
+      throw new NotFoundException(`User with ID ${user_id} not found`);
     }
 
-    const transactionId = uuidv4();
-    const newTransaction = {
-      ...createTransactionDto,
-      transaction_id: transactionId,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    const transactions = data.map((transaction) => {
+      const transactionId = uuidv4();
+      return {
+        ...transaction,
+        transaction_id: transactionId,
+        user_id,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+    });
+
     try {
-      await this.collection.doc(transactionId).set(newTransaction);
+      const batch = new Firestore().batch();
+      transactions.forEach((transaction) => {
+        const docRef = this.collection.doc(transaction.transaction_id);
+        batch.set(docRef, transaction);
+      });
+      await batch.commit();
+
       return {
         status: 'success',
-        message: 'Transaction created successfully',
-        data: newTransaction,
+        message: 'Transactions created successfully',
+        data: transactions,
       };
     } catch (error) {
       throw new InternalServerErrorException(
-        `Failed to create transaction: ${error.message}`,
+        `Failed to create transactions: ${error.message}`,
       );
     }
   }
@@ -71,29 +89,28 @@ export class TransactionsService {
     };
   }
 
-  async update(id: string, updateTransactionDto: UpdateTransactionDto) {
-    const transactionRef = this.collection.doc(id);
-    const doc = await transactionRef.get();
-
-    if (!doc.exists) {
-      throw new NotFoundException(`Transaction with ID ${id} not found`);
-    }
-
-    const updatedTransaction = {
-      ...updateTransactionDto,
-      updatedAt: new Date().toISOString(),
-    };
-
+  async findByUserId(user_id: string) {
     try {
-      await transactionRef.update(updatedTransaction);
+      const snapshot = await this.collection
+        .where('user_id', '==', user_id)
+        .get();
+
+      if (snapshot.empty) {
+        throw new NotFoundException(
+          `No transactions found for user ID ${user_id}`,
+        );
+      }
+
+      const transactions = snapshot.docs.map((doc) => doc.data());
+
       return {
         status: 'success',
-        message: `Transaction with ID ${id} updated successfully`,
-        data: updatedTransaction,
+        message: `Transactions for user ID ${user_id} fetched successfully`,
+        data: transactions,
       };
     } catch (error) {
       throw new InternalServerErrorException(
-        `Failed to update transaction: ${error.message}`,
+        `Failed to fetch transactions: ${error.message}`,
       );
     }
   }
