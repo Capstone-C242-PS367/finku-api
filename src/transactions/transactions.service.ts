@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Firestore } from '@google-cloud/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import { UsersService } from '../users/users.service';
@@ -22,8 +21,8 @@ export class TransactionsService {
       console.error('Failed to initialize Firestore client:', error.message);
     }
   }
-  async create(payload: { user_id: string; data: CreateTransactionDto[] }) {
-    const { user_id, data } = payload;
+  async create(createTransactionDto: CreateTransactionDto) {
+    const { user_id, data } = createTransactionDto;
 
     const user = await this.usersService.findOne(user_id);
     if (!user) {
@@ -36,8 +35,8 @@ export class TransactionsService {
         ...transaction,
         transaction_id: transactionId,
         user_id,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       };
     });
 
@@ -112,33 +111,6 @@ export class TransactionsService {
     } catch (error) {
       throw new InternalServerErrorException(
         `Failed to fetch transactions: ${error.message}`,
-      );
-    }
-  }
-
-  async update(id: string, updateTransactionDto: UpdateTransactionDto) {
-    const transactionRef = this.collection.doc(id);
-    const doc = await transactionRef.get();
-
-    if (!doc.exists) {
-      throw new NotFoundException(`Transaction with ID ${id} not found`);
-    }
-
-    const updatedTransaction = {
-      ...updateTransactionDto,
-      updatedAt: new Date().toISOString(),
-    };
-
-    try {
-      await transactionRef.update(updatedTransaction);
-      return {
-        status: 'success',
-        message: `Transaction with ID ${id} updated successfully`,
-        data: updatedTransaction,
-      };
-    } catch (error) {
-      throw new InternalServerErrorException(
-        `Failed to update transaction: ${error.message}`,
       );
     }
   }

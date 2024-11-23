@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   InternalServerErrorException,
@@ -11,9 +10,8 @@ import {
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
 @Controller('transactions')
 export class TransactionsController {
@@ -57,6 +55,11 @@ export class TransactionsController {
                 type: 'string',
                 example: 'debt',
               },
+              date: {
+                type: 'string',
+                format: 'date',
+                example: '2024-11-17',
+              },
               category: {
                 type: 'string',
                 example: 'food',
@@ -70,12 +73,12 @@ export class TransactionsController {
                 format: 'uuid',
                 example: '456e1234-e89b-12d3-a456-426614174000',
               },
-              createdAt: {
+              created_at: {
                 type: 'string',
                 format: 'date-time',
                 example: '2024-11-17T12:00:00Z',
               },
-              updatedAt: {
+              updated_at: {
                 type: 'string',
                 format: 'date-time',
                 example: '2024-11-17T13:00:00Z',
@@ -86,9 +89,10 @@ export class TransactionsController {
       },
     },
   })
-  create(@Body() payload: { user_id: string; data: CreateTransactionDto[] }) {
+  @ApiBearerAuth()
+  create(@Body() createTransactionDto: CreateTransactionDto) {
     try {
-      return this.transactionsService.create(payload);
+      return this.transactionsService.create(createTransactionDto);
     } catch (e) {
       throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
     }
@@ -132,6 +136,11 @@ export class TransactionsController {
                 type: 'string',
                 example: 'credit',
               },
+              date: {
+                type: 'string',
+                format: 'date',
+                example: '2024-11-17',
+              },
               category: {
                 type: 'string',
                 example: 'food',
@@ -145,12 +154,12 @@ export class TransactionsController {
                 format: 'uuid',
                 example: '456e1234-e89b-12d3-a456-426614174000',
               },
-              createdAt: {
+              created_at: {
                 type: 'string',
                 format: 'date-time',
                 example: '2024-11-17T12:00:00Z',
               },
-              updatedAt: {
+              updated_at: {
                 type: 'string',
                 format: 'date-time',
                 example: '2024-11-17T13:00:00Z',
@@ -161,6 +170,7 @@ export class TransactionsController {
       },
     },
   })
+  @ApiBearerAuth()
   findAll() {
     try {
       return this.transactionsService.findAll();
@@ -205,6 +215,11 @@ export class TransactionsController {
               type: 'string',
               example: 'credit',
             },
+            date: {
+              type: 'string',
+              format: 'date',
+              example: '2024-11-17',
+            },
             category: {
               type: 'string',
               example: 'food',
@@ -218,12 +233,12 @@ export class TransactionsController {
               format: 'uuid',
               example: '456e1234-e89b-12d3-a456-426614174000',
             },
-            createdAt: {
+            created_at: {
               type: 'string',
               format: 'date-time',
               example: '2024-11-17T12:00:00Z',
             },
-            updatedAt: {
+            updated_at: {
               type: 'string',
               format: 'date-time',
               example: '2024-11-17T13:00:00Z',
@@ -233,6 +248,7 @@ export class TransactionsController {
       },
     },
   })
+  @ApiBearerAuth()
   findOne(@Param('id') id: string) {
     try {
       return this.transactionsService.findOne(id);
@@ -278,6 +294,11 @@ export class TransactionsController {
                 type: 'string',
                 example: 'credit',
               },
+              date: {
+                type: 'string',
+                format: 'date',
+                example: '2024-11-17',
+              },
               category: {
                 type: 'string',
                 example: 'food',
@@ -291,12 +312,12 @@ export class TransactionsController {
                 format: 'uuid',
                 example: '456e1234-e89b-12d3-a456-426614174000',
               },
-              createdAt: {
+              created_at: {
                 type: 'string',
                 format: 'date-time',
                 example: '2024-11-17T12:00:00Z',
               },
-              updatedAt: {
+              updated_at: {
                 type: 'string',
                 format: 'date-time',
                 example: '2024-11-17T13:00:00Z',
@@ -350,79 +371,10 @@ export class TransactionsController {
       },
     },
   })
-  async findByUserId(@Param('user_id') user_id: string) {
+  @ApiBearerAuth()
+  findByUserId(@Param('user_id') user_id: string) {
     try {
-      return await this.transactionsService.findByUserId(user_id);
-    } catch (e) {
-      throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
-    }
-  }
-
-  @Patch(':id')
-  @UseGuards(AuthGuard)
-  @ApiResponse({
-    status: 200,
-    description: 'Transaction updated successfully.',
-    schema: {
-      type: 'object',
-      properties: {
-        status: {
-          type: 'string',
-          example: 'success',
-        },
-        message: {
-          type: 'string',
-          example: 'Transaction updated successfully',
-        },
-        data: {
-          type: 'object',
-          properties: {
-            transaction_id: {
-              type: 'string',
-              format: 'uuid',
-              example: '123e4567-e89b-12d3-a456-426614174000',
-            },
-            title: {
-              type: 'string',
-              example: 'Updated pecel ayam',
-            },
-            amount: {
-              type: 'string',
-              example: '60000',
-            },
-            type: {
-              type: 'string',
-              example: 'credit',
-            },
-            category: {
-              type: 'string',
-              example: 'food',
-            },
-            currency: {
-              type: 'string',
-              example: 'IDR',
-            },
-            user_id: {
-              type: 'string',
-              format: 'uuid',
-              example: '456e1234-e89b-12d3-a456-426614174000',
-            },
-            updatedAt: {
-              type: 'string',
-              format: 'date-time',
-              example: '2024-11-17T13:00:00Z',
-            },
-          },
-        },
-      },
-    },
-  })
-  update(
-    @Param('id') id: string,
-    @Body() updateTransactionDto: UpdateTransactionDto,
-  ) {
-    try {
-      return this.transactionsService.update(id, updateTransactionDto);
+      return this.transactionsService.findByUserId(user_id);
     } catch (e) {
       throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
     }
@@ -447,6 +399,7 @@ export class TransactionsController {
       },
     },
   })
+  @ApiBearerAuth()
   remove(@Param('id') id: string) {
     try {
       return this.transactionsService.remove(id);
