@@ -22,7 +22,7 @@ export class MlOcrService {
         amount: Math.floor(Math.random() * 100000),
         type: type[i % 2],
         category: category[Math.floor(Math.random() * 5)],
-        name: name[Math.floor(Math.random() * 5)],
+        title: name[Math.floor(Math.random() * 5)],
         currency: 'IDR',
         date: new Date().toISOString(),
       });
@@ -46,8 +46,8 @@ export class MlOcrService {
       status: 'success',
       message: 'Berhasil melakukan ocr',
       data: {
-        total_DB: totalDB,
-        total_CR: totalCR,
+        total_debit: totalDB,
+        total_credit: totalCR,
         difference: totalDB - totalCR,
         result: result,
       },

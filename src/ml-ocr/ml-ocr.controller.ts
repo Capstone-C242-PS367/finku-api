@@ -44,11 +44,11 @@ export class MlOcrController {
         data: {
           type: 'object',
           properties: {
-            total_DB: {
+            total_debit: {
               type: 'number',
               example: 93144,
             },
-            total_CR: {
+            total_credit: {
               type: 'number',
               example: 44236,
             },
@@ -73,7 +73,7 @@ export class MlOcrController {
                     type: 'string',
                     example: 'Listrik',
                   },
-                  name: {
+                  title: {
                     type: 'string',
                     example: 'ayam geprek',
                   },
