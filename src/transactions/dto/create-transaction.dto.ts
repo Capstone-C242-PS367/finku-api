@@ -1,17 +1,12 @@
 import {
   IsString,
   IsNotEmpty,
-  IsDateString,
   IsNumberString,
-  Length,
+  IsDateString,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTransactionDto {
-  @IsString()
-  @IsNotEmpty({ message: 'user_id is required' })
-  user_id: string;
-
   @IsString()
   @IsNotEmpty({ message: 'name is required' })
   @Length(1, 255, { message: 'name must be between 1 and 255 characters' })
@@ -28,6 +23,7 @@ export class CreateTransactionDto {
   @ApiProperty()
   amount: string;
 
+  @IsString()
   type: string;
 
   @IsString()

@@ -1,23 +1,39 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateTransactionDto } from './create-transaction.dto';
-import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsString,
+  IsOptional,
+  IsNotEmpty,
+  IsNumberString,
+  IsDateString,
+} from 'class-validator';
 
-export class UpdateTransactionDto extends PartialType(CreateTransactionDto) {
-  @ApiProperty()
-  name?: string;
+export class UpdateTransactionDto {
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty({ message: 'name cannot be empty' })
+  title?: string;
 
-  @ApiProperty()
+  @IsOptional()
+  @IsDateString(
+    {},
+    { message: 'date must be a valid date in ISO format (YYYY-MM-DD)' },
+  )
   date?: Date;
 
-  @ApiProperty()
+  @IsOptional()
+  @IsNumberString({}, { message: 'amount must be a numeric value' })
+  @IsNotEmpty({ message: 'amount cannot be empty' })
   amount?: string;
 
-  @ApiProperty()
+  @IsOptional()
+  @IsString()
   type?: string;
 
-  @ApiProperty()
+  @IsOptional()
+  @IsString()
   category?: string;
 
-  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty({ message: 'currency cannot be empty' })
   currency?: string;
 }

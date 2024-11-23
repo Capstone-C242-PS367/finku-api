@@ -20,16 +20,16 @@ export class TransactionsController {
 
   @Post()
   @UseGuards(AuthGuard)
-  create(@Body() createTransactionDto: CreateTransactionDto) {
+  create(@Body() payload: { user_id: string; data: CreateTransactionDto[] }) {
     try {
-      return this.transactionsService.create(createTransactionDto);
+      return this.transactionsService.create(payload);
     } catch (e) {
       throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
     }
   }
 
   @Get()
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   findAll() {
     try {
       return this.transactionsService.findAll();
@@ -43,6 +43,16 @@ export class TransactionsController {
   findOne(@Param('id') id: string) {
     try {
       return this.transactionsService.findOne(id);
+    } catch (e) {
+      throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
+    }
+  }
+
+  @Get('user/:user_id')
+  @UseGuards(AuthGuard)
+  async findByUserId(@Param('user_id') user_id: string) {
+    try {
+      return await this.transactionsService.findByUserId(user_id);
     } catch (e) {
       throw new InternalServerErrorException(`Unexpected error: ${e.message}`);
     }
