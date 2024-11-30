@@ -11,10 +11,18 @@ export class AuthController {
   @Post('login')
   @ApiResponse({
     status: 200,
-    description: 'JWT token response.',
+    description: 'User profile retrieved successfully',
     schema: {
       type: 'object',
       properties: {
+        name: {
+          type: 'string',
+          example: 'johndoe',
+        },
+        email: {
+          type: 'string',
+          example: 'johndoe@email.com',
+        },
         access_token: {
           type: 'string',
           example: 'jwt_token',
