@@ -1,56 +1,65 @@
 import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import * as FormData from 'form-data';
 
 @Injectable()
 export class MlOcrService {
-  uploadFile(file: Express.Multer.File) {
-    console.log(file);
+  async uploadFile(file: Express.Multer.File) {
+    const formData = new FormData();
+    formData.append('file', file.buffer, { filename: file.originalname });
 
-    //TODO: INI NANTI DIHAPUS DIGANTI SAMA HASIL OCR BENERAN
-    //dummy doang buat ngetes di md
-    const result = [];
-    const name = [
-      'ayam geprek',
-      'nasi goreng',
-      'mie ayam',
-      'jus jeruk',
-      'roti bakar',
-    ];
-    const category = ['Makan', 'Belanja', 'Parkir', 'Listrik', 'Laundry'];
-    const type = ['CR', 'DB'];
-    for (let i = 0; i <= Math.floor(Math.random() * 7) + 1; i++) {
-      result.push({
-        amount: Math.floor(Math.random() * 100000),
-        type: type[i % 2],
-        category: category[Math.floor(Math.random() * 5)],
-        title: name[Math.floor(Math.random() * 5)],
-        currency: 'IDR',
-        date: new Date().toISOString(),
-      });
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let totalDB = 0;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let totalCR = 0;
+    try {
+      const response = await axios.post(
+        'https://finku-ml-api-996360456227.asia-southeast2.run.app/predict',
+        formData,
+        {
+          headers: {
+            ...formData.getHeaders(),
+          },
+        },
+      );
 
-    result.forEach((res) => {
-      if (res.type === 'CR') {
-        totalCR += res.amount;
-      } else {
-        totalDB += res.amount;
+      const { Date: dates, Nominal: nominal, Type: types } = response.data;
+
+      const result = [];
+      let totalDB = 0;
+      let totalCR = 0;
+
+      const length = Math.min(dates.length, nominal.length, types.length);
+      for (let i = 0; i < length; i++) {
+        const amount = parseInt(nominal[i].replace(/[^0-9]/g, ''), 10);
+        const type = types[i];
+        const date = dates[i];
+
+        result.push({
+          amount: amount,
+          type: type,
+          category: '',
+          title: '',
+          currency: 'IDR',
+          date: date,
+        });
+
+        if (type === 'CR') {
+          totalCR += amount;
+        } else {
+          totalDB += amount;
+        }
       }
-    });
 
-    ////////////////////////////////////////
-
-    return {
-      status: 'success',
-      message: 'Berhasil melakukan ocr',
-      data: {
-        total_debit: totalDB,
-        total_credit: totalCR,
-        difference: totalDB - totalCR,
-        result: result,
-      },
-    };
+      return {
+        status: 'success',
+        message: 'Berhasil melakukan ocr',
+        data: {
+          total_debit: totalDB,
+          total_credit: totalCR,
+          difference: totalDB - totalCR,
+          result: result,
+        },
+      };
+    } catch (error) {
+      console.error('Error uploading file to ML API:', error);
+      throw new Error('Failed to process the image with the ML API');
+    }
   }
 }

@@ -100,7 +100,7 @@ export class MlOcrController {
         .addMaxSizeValidator({
           maxSize: 3 * 1024 * 1024,
         })
-        .addFileTypeValidator({ fileType: /jpeg|jpg|png/ }) // Accept only image files
+        .addFileTypeValidator({ fileType: /jpeg|jpg|png|pdf/ }) // Accept only image files
         .build(),
     )
     file: Express.Multer.File,
