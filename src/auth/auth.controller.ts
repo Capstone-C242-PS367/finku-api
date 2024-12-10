@@ -15,6 +15,10 @@ export class AuthController {
     schema: {
       type: 'object',
       properties: {
+        id: {
+          type: 'string',
+          example: '12345',
+        },
         name: {
           type: 'string',
           example: 'johndoe',
