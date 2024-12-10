@@ -1,11 +1,11 @@
 steps:
   # Step 1: Build the Docker Image
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'build', '-t', 'asia-southeast2-docker.pkg.dev/finku-app/backend/finku-api:prod', '.' ]
+    args: [ 'build', '-t', 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/backend/finku-api:prod', '.' ]
 
   # Step 2: Push the image to the Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'push', 'asia-southeast2-docker.pkg.dev/finku-app/backend/finku-api:prod' ]
+    args: [ 'push', 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/backend/finku-api:prod' ]
 
   # Step 3: Deployment to Cloud Run after image is pushed
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -14,14 +14,17 @@ steps:
       - 'deploy'
       - 'finku-api'
       - '--image'
-      - 'asia-southeast2-docker.pkg.dev/finku-app/backend/finku-api:prod'
+      - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/backend/finku-api:prod'
       - '--region'
       - 'asia-southeast2'
       - '--platform'
       - 'managed'
       # Optional: if you want to allow unauthenticated access
       - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'ML_API=$_ML_API, JWT_KEY=$_JWT_KEY'
 
-logsBucket: 'gs://finku-app_cloudbuild'
 
-serviceAccount: '996360456227-compute@developer.gserviceaccount.com'
+logsBucket: $_LOGS_BUCKET
+
+serviceAccount: $_SERVICE_ACCOUNT

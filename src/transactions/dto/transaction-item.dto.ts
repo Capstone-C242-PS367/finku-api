@@ -8,7 +8,6 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class TransactionItemDto {
   @IsString()
-  @IsNotEmpty({ message: 'title is required' })
   @ApiProperty()
   title: string;
 
@@ -35,7 +34,6 @@ export class TransactionItemDto {
   category: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'currency is required' })
   @ApiProperty()
   currency: string;
 }

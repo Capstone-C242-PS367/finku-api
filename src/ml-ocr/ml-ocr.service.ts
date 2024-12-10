@@ -10,7 +10,7 @@ export class MlOcrService {
 
     try {
       const response = await axios.post(
-        'https://finku-ml-api-996360456227.asia-southeast2.run.app/predict',
+        `${process.env.ML_API}/predict`,
         formData,
         {
           headers: {
