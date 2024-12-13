@@ -1,36 +1,24 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This backend service serves as the backbone for Finku Android Application. Built using the NestJS framework, it provides a robust, modular, and scalable architecture to handle business logic and API integrations efficiently.
+
+The service is designed to leverage Google Cloud Platform (GCP) for seamless cloud-native deployment and management, ensuring high availability and scalability.
+
+## Cloud Computing Team Members
+| Team Member              | Cohort ID    |
+|--------------------------|--------------|
+| Afnan Edsa Ramadhan      | C002B4KY0160 |
+| Muhhamad Syauqi Jannatan | C002B4KY3142 |
 
 ## Project setup
 
 ```bash
 $ npm install
 ```
+## Environment Configuration
+1. Copy the .env.example file to a new file named .env in the root directory of the project:
+2. Open the .env file and replace the placeholder values with your actual configuration.
+
 
 ## Compile and run the project
 
@@ -58,42 +46,285 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Deployment
+## API Documentation
+This backend service provides a set of APIs to support the functionality of the Finku Android Application. The API documentation is automatically generated and can be accessed via the following steps:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### Accessing Swagger UI:
+1. Run the backend service using any of the modes mentioned above.
+2. Navigate to http://localhost:`PORT`/api in your browser (replace <PORT> with the port number your server is running on, typically defined in your environment variables or default configuration).
+3. Explore and interact with the API endpoints directly through the Swagger interface.
+4. Alternatively, access the live API documentation hosted on GCP using this [link](https://finku-api-996360456227.asia-southeast2.run.app/api)
+### API Endpoints:
+#### User Management: 
+1. POST /users - Create a new user <br>
+Authorization: Bearer <your_access_token> <br>
+Request Body:
 ```bash
-$ npm install -g mau
-$ mau deploy
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "securepassword123"
+}
+```
+Response:
+Status 201 (Created)
+```bash
+{
+  "status": "success",
+  "message": "User created successfully",
+  "data": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "name": "John Doe",
+    "email": "johndoe@example.com"
+  }
+}
+```
+2. GET /users - Retrieve all users <br>
+Authorization: Bearer <your_access_token> <br>
+Response:
+   Status 200 (OK)
+```bash
+{
+  "status": "success",
+  "message": "All users fetched successfully",
+  "data": [
+    {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "John Doe",
+      "email": "johndoe@example.com",
+      "created_at": "2024-11-17T12:00:00Z",
+      "updated_at": "2024-11-17T13:00:00Z"
+    }
+  ]
+}
+```
+3. GET /users/{id} - Retrieve user details <br>
+   Authorization: Bearer <your_access_token> <br>
+   Response:
+   Status 200 (OK)
+```bash
+{
+  "status": "success",
+  "message": "User fetched successfully",
+  "data": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "name": "user_name",
+    "email": "user@example.com",
+    "password": "hash_password_user",
+    "created_at": "2024-11-17T12:00:00Z",
+    "updated_at": "2024-11-17T13:00:00Z"
+  }
+}
+```
+4. PATCH /users/{id} - Update user information <br>
+   Authorization: Bearer <your_access_token> <br>
+   Request Body:
+```bash
+{
+  "name": "string",
+  "password": "string"
+}
+```
+   Response:
+   Status 200 (OK)
+```bash
+{
+  "status": "success",
+  "message": "User with ID #xxxx updated successfully",
+  "data": {
+    "name": "user_name",
+    "password": "password_user_hash",
+    "updated_at": "2024-11-17T12:00:00Z"
+  }
+}
+```
+5. DELETE /users/{id} - Delete a user <br>
+   Authorization: Bearer <your_access_token> <br>
+   Response:
+   Status 200 (OK)
+```bash
+{
+  "status": "success",
+  "message": "User with ID #xxxxxx removed successfully"
+}
+```
+3. GET /users/{id} - Retrieve user details <br>
+   Authorization: Bearer <your_access_token> <br>
+   Response:
+   Status 200 (OK)
+```bash
+{
+  "status": "success",
+  "message": "User fetched successfully",
+  "data": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "name": "user_name",
+    "email": "user@example.com",
+    "password": "hash_password_user",
+    "created_at": "2024-11-17T12:00:00Z",
+    "updated_at": "2024-11-17T13:00:00Z"
+  }
+}
+```
+#### Authentication
+
+POST /auth/login - Authenticate a user and retrieve a token.
+Request Body:
+```bash
+{
+  "email": "string",
+  "password": "string"
+}
+```
+Response:
+Status 200 (OK)
+```bash
+{
+  "id": "12345",
+  "name": "johndoe",
+  "email": "johndoe@email.com",
+  "access_token": "jwt_token"
+}
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Financial Data
 
-## Resources
+1. POST /transactions - Add a new transaction.
+Authorization: Bearer <your_access_token> <br>
+Request Body:
+```bash
+{
+  "user_id": "string",
+  "data": [
+    {
+      "title": "string",
+      "amount": "string",
+      "type": "string",
+      "date": "string",
+      "category": "string",
+      "currency": "string"
+    }
+  ]
+}
+```
+Response:
+Status 201 (Created)
+```bash
+{
+  "status": "success",
+  "message": "Transactions created successfully",
+  "data": [
+    {
+      "transaction_id": "123e4567-e89b-12d3-a456-426614174000",
+      "title": "pecel lele",
+      "amount": "30000",
+      "type": "debt",
+      "date": "2024-11-17",
+      "category": "food",
+      "currency": "IDR",
+      "user_id": "456e1234-e89b-12d3-a456-426614174000",
+      "created_at": "2024-11-17T12:00:00Z",
+      "updated_at": "2024-11-17T13:00:00Z"
+    }
+  ]
+}
+```
+2. GET /transactions - Fetch all transactions.
+Authorization: Bearer <your_access_token> <br>
+   Response:
+   Status 200 (OK)
+```bash
+{
+  "status": "success",
+  "message": "All transactions fetched successfully",
+  "data": [
+    {
+      "transaction_id": "123e4567-e89b-12d3-a456-426614174000",
+      "title": "pecel ayam",
+      "amount": "50000",
+      "type": "credit",
+      "date": "2024-11-17",
+      "category": "food",
+      "currency": "IDR",
+      "user_id": "456e1234-e89b-12d3-a456-426614174000",
+      "created_at": "2024-11-17T12:00:00Z",
+      "updated_at": "2024-11-17T13:00:00Z"
+    }
+  ]
+}
+```
+3. GET /transactions/{id} - Fetch detail transactions.
+   Authorization: Bearer <your_access_token> <br>
+   Response:
+   Status 200 (OK)
+```bash
+{
+  "status": "success",
+  "message": "Transaction fetched successfully",
+  "data": {
+    "transaction_id": "123e4567-e89b-12d3-a456-426614174000",
+    "title": "pecel ayam",
+    "amount": "50000",
+    "type": "credit",
+    "date": "2024-11-17",
+    "category": "food",
+    "currency": "IDR",
+    "user_id": "456e1234-e89b-12d3-a456-426614174000",
+    "created_at": "2024-11-17T12:00:00Z",
+    "updated_at": "2024-11-17T13:00:00Z"
+  }
+}
+```
+4. GET /transactions/user/{id} - Fetch user detail transactions.
+Authorization: Bearer <your_access_token> <br>
+    Response:
+    Status 200 (OK)
+```bash
+{
+  "status": "success",
+  "message": "Transactions for user fetched successfully",
+  "data": [
+    {
+      "transaction_id": "123e4567-e89b-12d3-a456-426614174000",
+      "title": "pecel ayam",
+      "amount": "50000",
+      "type": "credit",
+      "date": "2024-11-17",
+      "category": "food",
+      "currency": "IDR",
+      "user_id": "456e1234-e89b-12d3-a456-426614174000",
+      "created_at": "2024-11-17T12:00:00Z",
+      "updated_at": "2024-11-17T13:00:00Z"
+    }
+  ]
+}
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+#### Machine Learning
+1. POST /predict - Perform OCR prediction <br>
+   Request Body: multipart/form-data with the key file
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Response:
+Status 200 (OK)
+```bash
+{
+  "status": "success",
+  "message": "Berhasil melakukan ocr",
+  "data": {
+    "total_debit": 93144,
+    "total_credit": 44236,
+    "difference": 48908,
+    "result": [
+      {
+        "amount": 25531,
+        "type": "CR",
+        "category": "Listrik",
+        "title": "ayam geprek",
+        "currency": "IDR",
+        "date": "2024-11-20T01:21:52.454Z"
+      }
+    ]
+  }
+}
+```
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
